@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TestGlass2</string>
+    <string name="title_activity_accueil">Glass App</string>
+    <string name="hello_world">Manahoana</string>
+</resources>
