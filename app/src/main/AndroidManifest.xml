@@ -50,7 +50,8 @@
                 android:resource="@xml/voice_trigger" />
         </activity>
         <activity android:name=".SecondActivity"
-            android:configChanges="screenSize|orientation"></activity>
+            android:configChanges="screenSize|orientation"
+            android:theme="@android:style/Theme.NoTitleBar"></activity>
     </application>
 
 </manifest>

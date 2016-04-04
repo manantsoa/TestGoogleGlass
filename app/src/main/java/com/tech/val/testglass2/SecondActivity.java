@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.opengl.GLES20;
 import com.wikitude.architect.ArchitectView;
 import com.wikitude.architect.*;
 
@@ -36,13 +37,20 @@ public class SecondActivity extends Activity {
     }
 
     @Override
+
+    public void onResume() {
+        super.onResume();
+        this.architectView.onResume();
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
         this.architectView.onPostCreate();
         try {
             Log.d("ERROR", "ARCHITECT");
-            this.architectView.load("http://antoinederoquemaurel.github.io");
+            this.architectView.load("test/test.html");
         } catch (IOException e) {
             Log.d("ERROR", e.toString());
             e.printStackTrace();
