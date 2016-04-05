@@ -37,7 +37,6 @@ public class SecondActivity extends Activity {
     }
 
     @Override
-
     public void onResume() {
         super.onResume();
         this.architectView.onResume();
@@ -49,12 +48,24 @@ public class SecondActivity extends Activity {
 
         this.architectView.onPostCreate();
         try {
-            Log.d("ERROR", "ARCHITECT");
+            Log.d("Success", "ARCHITECT");
             this.architectView.load("test/test.html");
         } catch (IOException e) {
             Log.d("ERROR", e.toString());
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.architectView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.architectView.onDestroy();
     }
 }
