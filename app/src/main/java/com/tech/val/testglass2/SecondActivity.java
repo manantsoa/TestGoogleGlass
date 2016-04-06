@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import android.opengl.GLES20;
-import com.wikitude.architect.ArchitectView;
 import com.wikitude.architect.*;
 
 import java.io.IOException;
@@ -33,6 +32,7 @@ public class SecondActivity extends Activity {
 
         this.architectView = (ArchitectView)this.findViewById( R.id.architectView );
         this.architectView.onCreate(config);
+        Log.e("deviceSupported", ""+ArchitectView.isDeviceSupported(getApplicationContext()));
 
     }
 
