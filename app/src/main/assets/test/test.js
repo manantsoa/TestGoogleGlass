@@ -1,4 +1,5 @@
 var modelEarth;
+//var location;
 
 var World = {
 	loaded: false,
@@ -13,12 +14,22 @@ var World = {
 		/*
 			First a location where the model should be displayed will be defined. This location will be relativ to the user.	
 		*/
-		var location = new AR.RelativeLocation(null, -40, 0, 2);
+		var location = new AR.RelativeLocation(null, -40, 0, 1);
+		var location2 = new AR.RelativeLocation(location, 0, 1, 1);
 
 		/*
 			Next the model object is loaded.
 		*/
 		modelEarth = new AR.Model("pin_with_texture.wt3", {
+			onLoaded: this.worldLoaded,
+			scale: {
+				x: 1,
+				y: 1,
+				z: 1
+			}
+		});
+
+		model2 = new AR.Model("pin_with_texture.wt3", {
 			onLoaded: this.worldLoaded,
 			scale: {
 				x: 1,
@@ -35,6 +46,12 @@ var World = {
                cam: [modelEarth]
             }
         });
+
+        var obj2 = new AR.GeoObject(location2, {
+                    drawables: {
+                       cam: [model2]
+                    }
+                });
 	},
 
 	worldLoaded: function worldLoadedFn() {
@@ -51,5 +68,7 @@ var test = function() {
         x: 4,
         y: 4,
         z: 4
-    }
+    };
+
+    //location = new AR.RelativeLocation(null, -40, 0, -10);
 }
