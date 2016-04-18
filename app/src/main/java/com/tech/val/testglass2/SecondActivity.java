@@ -5,6 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import android.opengl.GLES20;
+import android.view.GestureDetector;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+
 import com.wikitude.architect.*;
 
 import java.io.IOException;
@@ -21,6 +26,8 @@ public class SecondActivity extends Activity {
             "EeQXw+9oaQ78qoBTDQ0KVN0KF1n+odmcISu1aBlYQiBrwb14/dss/ii4G3LHua8qg+8jUdWXp5timzEIsKxEfn" +
             "J6EgcGw5j1S/u84WAPza/+qYt2625oKxVzI+XsZomRXlZZm8QM1FpJ7qFDU/kXYisVJXovptePBCtGp+YTYU0xoqwEEkCsOkCQbZI=";
 
+
+    private GestureDetector mGestureDetector;
     ArchitectView architectView;
     //final StartupConfiguration config; MARCHE PAS SUR GOOGLE GLASS??
     final ArchitectView.ArchitectConfig config = new ArchitectView.ArchitectConfig(LICENCE_KEY);
@@ -29,6 +36,8 @@ public class SecondActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
+
+        mGestureDetector = new GestureDetector(this, new GlassDPadController());
 
         this.architectView = (ArchitectView)this.findViewById( R.id.architectView );
         this.architectView.onCreate(config);
@@ -55,6 +64,13 @@ public class SecondActivity extends Activity {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        mGestureDetector.onTouchEvent(event);
+        architectView.callJavascript("test()");
+        return true;
     }
 
     @Override

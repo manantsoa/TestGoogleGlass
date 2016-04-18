@@ -1,3 +1,5 @@
+var modelEarth;
+
 var World = {
 	loaded: false,
 	rotating: false,
@@ -11,12 +13,12 @@ var World = {
 		/*
 			First a location where the model should be displayed will be defined. This location will be relativ to the user.	
 		*/
-		var location = new AR.RelativeLocation(null, -20, 0, 2);
+		var location = new AR.RelativeLocation(null, -40, 0, 2);
 
 		/*
 			Next the model object is loaded.
 		*/
-		var modelEarth = new AR.Model("car.wt3", {
+		modelEarth = new AR.Model("pin_with_texture.wt3", {
 			onLoaded: this.worldLoaded,
 			scale: {
 				x: 1,
@@ -43,3 +45,11 @@ var World = {
 };
 
 World.init();
+
+var test = function() {
+    modelEarth.scale = {
+        x: 4,
+        y: 4,
+        z: 4
+    }
+}
