@@ -1,6 +1,10 @@
 package com.tech.val.testglass2;
 
 import android.app.Activity;
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -10,9 +14,20 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.tech.val.testglass2.utils.LocationUtils;
 import com.wikitude.architect.*;
 
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class SecondActivity extends Activity {
 
@@ -28,9 +43,13 @@ public class SecondActivity extends Activity {
 
 
     private GestureDetector mGestureDetector;
+    private LocationManager locationManager;
     ArchitectView architectView;
-    //final StartupConfiguration config; MARCHE PAS SUR GOOGLE GLASS??
+    //final StartupConfiguration config; MARCHE PAS SUR GOOGLE GLASS qui utilise version ancienne
     final ArchitectView.ArchitectConfig config = new ArchitectView.ArchitectConfig(LICENCE_KEY);
+    private ColorBlobDetector mDetector;
+    private Scalar mBlobColorRgba;
+    private Scalar mBlobColorHsv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +60,7 @@ public class SecondActivity extends Activity {
 
         this.architectView = (ArchitectView)this.findViewById( R.id.architectView );
         this.architectView.onCreate(config);
-        Log.e("deviceSupported", ""+ArchitectView.isDeviceSupported(getApplicationContext()));
+        Log.e("deviceSupported", "" + ArchitectView.isDeviceSupported(getApplicationContext()));
 
     }
 
@@ -64,12 +83,25 @@ public class SecondActivity extends Activity {
             e.printStackTrace();
         }
 
+        /*Location loc = getLastLocation();
+        architectView.callJavascript("createPins(" + loc.getLatitude() +
+                "," + loc.getLongitude() +
+                "," + loc.getAltitude());*/
+
     }
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
-        architectView.callJavascript("test()");
+        //architectView.callJavascript("test(10)");
+        Location loc = LocationUtils.getLastLocation(this.getBaseContext());
+        //Log.i("LOCATION", String.valueOf(loc.getLatitude()));
+        String call = "createPins(" + loc.getLatitude() +
+                "," + loc.getLongitude() +
+                "," + loc.getAltitude() + ")";
+        Log.i("CALL", call);
+        architectView.callJavascript(call);
+
         return true;
     }
 
@@ -83,5 +115,10 @@ public class SecondActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         this.architectView.onDestroy();
+    }
+
+    @Override
+    public void onCameraViewStarted(int width, int height) {
+        mDetector = new ColorBlobDetector();
     }
 }
