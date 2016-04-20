@@ -15,8 +15,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.tech.val.testglass2.utils.LocationUtils;
+import com.tech.val.testglass2.utils.OpenCVUtils;
 import com.wikitude.architect.*;
 
+import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -29,7 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class SecondActivity extends Activity {
+public class SecondActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
     private final String LICENCE_KEY = "K2rZJKdKHdDPEPMB7NElZWD0BBk1mC/" +
             "vDCHVYfbiLvATX70ot4j/K1ENXZYr70fvgBx4PukvOoBJCvNhlGWUo99MgjVP" +
@@ -50,6 +52,7 @@ public class SecondActivity extends Activity {
     private ColorBlobDetector mDetector;
     private Scalar mBlobColorRgba;
     private Scalar mBlobColorHsv;
+    private Mat mSpectrum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +96,7 @@ public class SecondActivity extends Activity {
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
-        //architectView.callJavascript("test(10)");
         Location loc = LocationUtils.getLastLocation(this.getBaseContext());
-        //Log.i("LOCATION", String.valueOf(loc.getLatitude()));
         String call = "createPins(" + loc.getLatitude() +
                 "," + loc.getLongitude() +
                 "," + loc.getAltitude() + ")";
@@ -120,5 +121,31 @@ public class SecondActivity extends Activity {
     @Override
     public void onCameraViewStarted(int width, int height) {
         mDetector = new ColorBlobDetector();
+        mBlobColorRgba = new Scalar(255);
+        mBlobColorHsv = new Scalar(255);
+        mSpectrum = new Mat();
+        Size SPECTRUM_SIZE = new Size(200, 64);
+
+
+        // postite color
+        mBlobColorRgba.val[0] = 207;
+        mBlobColorRgba.val[1] = 110;
+        mBlobColorRgba.val[2] = 135;
+        mBlobColorRgba.val[3] = 255;
+
+        mBlobColorHsv = OpenCVUtils.converScalarRgba2Hsv(mBlobColorRgba);
+        mDetector.setHsvColor(mBlobColorHsv);
+
+        Imgproc.resize(mDetector.getSpectrum(), mSpectrum, SPECTRUM_SIZE);
+    }
+
+    @Override
+    public void onCameraViewStopped() {
+
+    }
+
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        return null;
     }
 }

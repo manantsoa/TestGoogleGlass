@@ -2,6 +2,8 @@ var modelEarth;
 var model2;
 //var location;
 const NB_PINS = 10;
+var pins = [];
+var relativeLocationPins = [];
 
 var World = {
 	loaded: false,
@@ -16,36 +18,40 @@ var World = {
 		/*
 			First a location where the model should be displayed will be defined. This location will be relativ to the user.	
 		*/
-
 		var location = new AR.RelativeLocation(null, -40, 0, 1);
-		var location3 = new AR.GeoLocation(latitude, longitude, altitude + 1);
-		var location2 = new AR.RelativeLocation(location, 0, 5, 1);
 
-		/*
-			Next the model object is loaded.
-		*/
-		modelEarth = new AR.Model("pin_with_texture.wt3", {
-			onLoaded: this.worldLoaded,
-			scale: {
-				x: 1,
-				y: 1,
-				z: 1
-			}
-		});
 
-		model2 = new AR.Model("pin_with_texture.wt3", {
-			onLoaded: this.worldLoaded,
-			scale: {
-				x: 1,
-				y: 1,
-				z: 1
-			}
-		});
+        for (var i = 0; i < NB_PINS; i++) {
+            var loc = new AR.RelativeLocation(location, pinPositions[i].north * -4, pinPositions[i].east * 3, -5);
+            relativeLocationPins.push(loc);
+        }
+
+        /*
+            Next the model object is loaded.
+        */
+        modelEarth = new AR.Model("pin_with_texture.wt3", {
+            onLoaded: this.worldLoaded,
+            scale: {
+                x: 1,
+                y: 1,
+                z: 1
+            }
+        });
+
+        for (var i = 0; i < NB_PINS; i++) {
+             var obj = new AR.GeoObject(relativeLocationPins[i], {
+                                   drawables: {
+                                      cam: [modelEarth]
+                                   }
+                                });
+             pins.push(obj);
+        }
+
 
 		/*
 			Putting it all together the location and 3D model is added to an AR.GeoObject.
 		*/
-		var obj = new AR.GeoObject(location, {
+		/*var obj = new AR.GeoObject(location, {
             drawables: {
                cam: [modelEarth]
             }
@@ -61,7 +67,7 @@ var World = {
                             drawables: {
                                cam: [modelEarth]
                             }
-                        });
+                        });*/
 	},
 
 	worldLoaded: function worldLoadedFn() {
@@ -88,7 +94,6 @@ console.log("LALALA");
 //Selon la localisation
 function createPins(latitude, longitude, altitude) {
     console.log(latitude + ", " + longitude + ", " + altitude);
-    var pins = [];
 
     //Création de 10 quilles
     // La première quille se dessine sur le post-it
@@ -99,3 +104,16 @@ function createPins(latitude, longitude, altitude) {
 
     World.init(latitude, longitude, altitude);
 };
+
+var pinPositions = [
+            {north: 0,east: 0},
+            {north: 1,east: 1},
+            {north: 1, east: -1},
+            {north: 2,east: 2},
+            {north: 2, east: 0},
+            {north: 2,east: -2},
+            {north: 3,east: 3},
+            {north: 3,east: 1},
+            {north: 3,east: -1},
+            {north: 3,east: -3}
+];
