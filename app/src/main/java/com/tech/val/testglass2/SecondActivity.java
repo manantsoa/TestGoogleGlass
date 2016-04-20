@@ -100,8 +100,8 @@ public class SecondActivity extends Activity implements CameraBridgeViewBase.CvC
         String call = "createPins(" + loc.getLatitude() +
                 "," + loc.getLongitude() +
                 "," + loc.getAltitude() + ")";
-        Log.i("CALL", call);
-        architectView.callJavascript(call);
+        //architectView.callJavascript(call);
+        architectView.setLocation(loc.getLatitude(),loc.getLongitude(), (float) loc.getAltitude());
 
         return true;
     }

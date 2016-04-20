@@ -9,17 +9,20 @@ var World = {
 	loaded: false,
 	rotating: false,
 
-	init: function initFn(latitude, longitude, altitude) {
+	init: function initFn(latitude, longitude, altitude, accuracy) {
+
+	    console.log(latitude);
 		this.createModelAtLocation(latitude, longitude, altitude);
 	},
 
 	createModelAtLocation: function createModelAtLocationFn(latitude, longitude, altitude) {
 
 		/*
-			First a location where the model should be displayed will be defined. This location will be relativ to the user.	
+			First a location where the model should be displayed will be defined. This location will be relativ to the user.
 		*/
 		var location = new AR.RelativeLocation(null, -40, 0, 1);
-
+		var location2 = new AR.GeoLocation(43.6066773, 1.4496225);
+		//43.6066773, 1.4496225
 
         for (var i = 0; i < NB_PINS; i++) {
             var loc = new AR.RelativeLocation(location, pinPositions[i].north * -4, pinPositions[i].east * 3, -5);
@@ -38,6 +41,11 @@ var World = {
             }
         });
 
+        /*var obj = new AR.GeoObject(location2, {
+                                           drawables: {
+                                              cam: [modelEarth]
+                                           }
+                                        });*/
         for (var i = 0; i < NB_PINS; i++) {
              var obj = new AR.GeoObject(relativeLocationPins[i], {
                                    drawables: {
@@ -46,6 +54,7 @@ var World = {
                                 });
              pins.push(obj);
         }
+
 
 
 		/*
@@ -77,7 +86,11 @@ var World = {
 	}
 };
 
-//World.init();
+//World.init(40,40,40);
+
+AR.context.onLocationChanged = function(latitude, longitude, altitude, accuracy){
+    World.init(latitude, longitude, altitude);
+};
 
 function test(cypher) {
 console.log("LALALA");
@@ -92,7 +105,7 @@ console.log("LALALA");
 
 //Création des 10 quilles à afficher
 //Selon la localisation
-function createPins(latitude, longitude, altitude) {
+/*function createPins(latitude, longitude, altitude) {
     console.log(latitude + ", " + longitude + ", " + altitude);
 
     //Création de 10 quilles
@@ -100,10 +113,10 @@ function createPins(latitude, longitude, altitude) {
         /*for (var i = 0; i < NB_PINS; i++) {
             //10 localisations et 10 modèles
             var modelLoc = {};
-        }*/
+        }
 
     World.init(latitude, longitude, altitude);
-};
+};*/
 
 var pinPositions = [
             {north: 0,east: 0},
