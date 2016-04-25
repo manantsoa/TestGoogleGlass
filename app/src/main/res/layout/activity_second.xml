@@ -6,5 +6,5 @@
     tools:context="com.tech.val.testglass2.SecondActivity">
 
     <com.wikitude.architect.ArchitectView android:id="@+id/architectView"
-        android:layout_width="match_parent" android:layout_height="match_parent"/>
+        android:layout_width="match_parent" android:layout_height="match_parent" />
 </RelativeLayout>

@@ -8,6 +8,7 @@ var relativeLocationPins = [];
 var World = {
 	loaded: false,
 	rotating: false,
+	initialized: false,
 
 	init: function initFn(latitude, longitude, altitude, accuracy) {
 
@@ -22,10 +23,15 @@ var World = {
 		*/
 		var location = new AR.RelativeLocation(null, -40, 0, 1);
 		var location2 = new AR.GeoLocation(43.6066773, 1.4496225);
+
+		var distance = location2.distanceToUser();
+		C:\Users\andriamihary.razanaj\AndroidStudioProjects\Cassebrique\app
+
+		console.log(distance);
 		//43.6066773, 1.4496225
 
         for (var i = 0; i < NB_PINS; i++) {
-            var loc = new AR.RelativeLocation(location, pinPositions[i].north * -4, pinPositions[i].east * 3, -5);
+            var loc = new AR.RelativeLocation(location2, pinPositions[i].north * -4, pinPositions[i].east * 3, -5);
             relativeLocationPins.push(loc);
         }
 
@@ -89,6 +95,7 @@ var World = {
 //World.init(40,40,40);
 
 AR.context.onLocationChanged = function(latitude, longitude, altitude, accuracy){
+    console.log(latitude + ", " + longitude);
     World.init(latitude, longitude, altitude);
 };
 

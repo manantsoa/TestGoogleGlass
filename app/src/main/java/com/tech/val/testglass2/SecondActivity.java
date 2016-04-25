@@ -2,6 +2,10 @@ package com.tech.val.testglass2;
 
 import android.app.Activity;
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -31,7 +35,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class SecondActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class SecondActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2, SensorEventListener {
 
     private final String LICENCE_KEY = "K2rZJKdKHdDPEPMB7NElZWD0BBk1mC/" +
             "vDCHVYfbiLvATX70ot4j/K1ENXZYr70fvgBx4PukvOoBJCvNhlGWUo99MgjVP" +
@@ -53,6 +57,9 @@ public class SecondActivity extends Activity implements CameraBridgeViewBase.CvC
     private Scalar mBlobColorRgba;
     private Scalar mBlobColorHsv;
     private Mat mSpectrum;
+    private SensorManager m_sensorManager;
+    float []m_lastMagFields;
+    float [] m_lastAccels;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +67,19 @@ public class SecondActivity extends Activity implements CameraBridgeViewBase.CvC
         setContentView(R.layout.activity_second);
 
         mGestureDetector = new GestureDetector(this, new GlassDPadController());
+        m_sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
-        this.architectView = (ArchitectView)this.findViewById( R.id.architectView );
+        this.architectView = (ArchitectView)this.findViewById(R.id.architectView);
         this.architectView.onCreate(config);
         Log.e("deviceSupported", "" + ArchitectView.isDeviceSupported(getApplicationContext()));
+
+        registerListeners();
 
     }
 
     @Override
     public void onResume() {
+        registerListeners();
         super.onResume();
         this.architectView.onResume();
     }
@@ -93,6 +104,15 @@ public class SecondActivity extends Activity implements CameraBridgeViewBase.CvC
 
     }
 
+    private void registerListeners() {
+        m_sensorManager.registerListener(this, m_sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD), SensorManager.SENSOR_DELAY_GAME);
+        m_sensorManager.registerListener(this, m_sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    private void unregisterListeners() {
+        m_sensorManager.unregisterListener(this);
+    }
+
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
@@ -101,19 +121,21 @@ public class SecondActivity extends Activity implements CameraBridgeViewBase.CvC
                 "," + loc.getLongitude() +
                 "," + loc.getAltitude() + ")";
         //architectView.callJavascript(call);
-        architectView.setLocation(loc.getLatitude(),loc.getLongitude(), (float) loc.getAltitude());
+        //architectView.setLocation(loc.getLatitude(),loc.getLongitude(), (float) loc.getAltitude());
 
         return true;
     }
 
     @Override
     protected void onPause() {
+        unregisterListeners();
         super.onPause();
         this.architectView.onPause();
     }
 
     @Override
     protected void onDestroy() {
+        unregisterListeners();
         super.onDestroy();
         this.architectView.onDestroy();
     }
@@ -147,5 +169,62 @@ public class SecondActivity extends Activity implements CameraBridgeViewBase.CvC
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         return null;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            accel(sensorEvent);
+        }
+        
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            mag(sensorEvent);
+        }
+    }
+
+    private void accel(SensorEvent sensorEvent) {
+        if (m_lastAccels == null) {
+            m_lastAccels = new float[3];
+        }
+
+        System.arraycopy(sensorEvent.values, 0, m_lastAccels, 0, 3);
+
+    }
+
+    private void mag(SensorEvent sensorEvent) {
+        if (m_lastMagFields == null) {
+            m_lastMagFields = new float[3];
+        }
+
+        System.arraycopy(sensorEvent.values, 0, m_lastMagFields, 0, 3);
+
+        if (m_lastAccels != null) {
+            computeOrientation();
+        }
+    }
+
+    private void computeOrientation() {
+        float[] values = new float[4];
+        float[] rotationMatrix = new float[16];
+
+        if (SensorManager.getRotationMatrix(rotationMatrix, null, m_lastMagFields, m_lastAccels))
+            SensorManager.getOrientation(rotationMatrix, values);
+
+        //Log.i("VALUES", values[0] + ", " + values[1] + ", " + values[2]);
+        float valDegrees = (float) Math.toDegrees(values[2]);
+
+        if(valDegrees >= 0 && valDegrees <90) {
+            Log.i("DIRECTION","NORTH " + valDegrees);
+        } else if (valDegrees >= 90 && valDegrees < 180)
+            Log.i("DIRECTION","EAST " + valDegrees);
+        else if (valDegrees < 0 && valDegrees >= -90)
+            Log.i("DIRECTION", "WEST " + valDegrees);
+        else
+            Log.i("DIRECTION", "SOUTH " + valDegrees);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
     }
 }
