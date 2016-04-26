@@ -213,14 +213,14 @@ public class SecondActivity extends Activity implements CameraBridgeViewBase.CvC
         //Log.i("VALUES", values[0] + ", " + values[1] + ", " + values[2]);
         float valDegrees = (float) Math.toDegrees(values[2]);
 
-        if(valDegrees >= 0 && valDegrees <90) {
-            Log.i("DIRECTION","NORTH " + valDegrees);
-        } else if (valDegrees >= 90 && valDegrees < 180)
-            Log.i("DIRECTION","EAST " + valDegrees);
-        else if (valDegrees < 0 && valDegrees >= -90)
-            Log.i("DIRECTION", "WEST " + valDegrees);
-        else
-            Log.i("DIRECTION", "SOUTH " + valDegrees);
+        if(valDegrees >= -20 && valDegrees <20) {
+            Log.i("DIRECTION","SOUTH " + valDegrees);
+        } else if (valDegrees >= 70 && valDegrees < 110)
+            Log.i("DIRECTION","WEST " + valDegrees);
+        else if (valDegrees < -160 || valDegrees > 160)
+            Log.i("DIRECTION", "NORTH " + valDegrees);
+        else if (valDegrees < -70 && valDegrees > -110)
+            Log.i("DIRECTION", "EAST " + valDegrees);
     }
 
     @Override
