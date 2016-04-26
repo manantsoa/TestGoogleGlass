@@ -15,6 +15,11 @@ import java.util.List;
  */
 public class LocationUtils {
 
+    /**
+     * Renvoie la dernière location la plus précise connue
+     * @param context
+     * @return Location
+     */
     public static Location getLastLocation(Context context) {
         LocationManager manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
